@@ -2,29 +2,28 @@ package com.simplenotesapp.simplenotesapp.dto;
 
 import java.util.Set;
 
-public class NoteDto {
-
-    private Long id;
+public class NoteWithUsersDto {
+    private long id;
     private String title;
     private String content;
-    private Set<Long> usersId;
+    private Set<UserDto> users;
 
-    public NoteDto(final Long id, final String title, final String content, final Set<Long> usersId) {
+    public NoteWithUsersDto(final long id, final String title, final String content, final Set<UserDto> users) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.usersId = usersId;
+        this.users = users;
     }
 
-    public NoteDto() {
+    public NoteWithUsersDto() {
 
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -44,11 +43,11 @@ public class NoteDto {
         this.content = content;
     }
 
-    public Set<Long> getUsersId() {
-        return usersId;
+    public Set<UserDto> getUsers() {
+        return users;
     }
 
-    public void setUsersId(Set<Long> usersId) {
-        this.usersId = usersId;
+    public void setUsers(Set<UserDto> users) {
+        this.users = users;
     }
 }

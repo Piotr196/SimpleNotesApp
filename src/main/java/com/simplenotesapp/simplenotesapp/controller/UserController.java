@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/api/users/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteUser(@PathVariable long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.delete(userService.findOneById(id));
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -46,7 +46,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/api/users/{id}", method = RequestMethod.GET)
-    public ResponseEntity<UserDto> getUser(@PathVariable long id) {
+    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
         UserDto userDto = userDtoMapper.mapToDto(userService.findOneById(id));
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }

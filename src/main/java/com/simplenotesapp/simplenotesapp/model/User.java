@@ -10,8 +10,9 @@ import java.util.Set;
 public class User {
 
     @Id
-    @Column(name = "id")
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "serial")
+    private Long id;
 
     @Column(name = "login")
     private String login;
@@ -32,7 +33,7 @@ public class User {
             inverseJoinColumns = { @JoinColumn(name = "note_id") })
     private Set<Note> notes = new HashSet<>();
 
-    public User(final long id, final String login, final String name, final String surname, final String password, final Set<Note> notes) {
+    public User(final Long id, final String login, final String name, final String surname, final String password, final Set<Note> notes) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -45,11 +46,11 @@ public class User {
 
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

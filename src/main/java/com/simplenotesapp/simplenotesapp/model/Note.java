@@ -9,8 +9,9 @@ import java.util.Set;
 public class Note {
 
     @Id
-    @Column(name = "id")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "serial")
+    private long id;
 
     @Column(name = "title")
     private String title;
@@ -21,7 +22,7 @@ public class Note {
     @ManyToMany(mappedBy = "notes")
     private Set<User> users = new HashSet<>();
 
-    public Note(final String id, final String title, final String content, final Set<User> users) {
+    public Note(final long id, final String title, final String content, final Set<User> users) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -32,11 +33,11 @@ public class Note {
 
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

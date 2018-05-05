@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findOneById(final long id);
+    Optional<User> findOneById(final Long id);
 
     Optional<User> findOneByLogin(final String login);
 
