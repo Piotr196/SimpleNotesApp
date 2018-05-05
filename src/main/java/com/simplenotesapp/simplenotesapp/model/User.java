@@ -28,7 +28,7 @@ public class User {
     private String password;
 
     @ManyToMany
-    @JoinTable(name = "userNotes",
+    @JoinTable(name = "user_notes",
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "note_id") })
     private Set<Note> notes = new HashSet<>();
