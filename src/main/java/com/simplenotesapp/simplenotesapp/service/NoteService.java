@@ -28,6 +28,7 @@ public class NoteService {
     }
 
     public Note findOneById(final Long id) {
+
         return noteRepository.findOneById(id).get();
     }
 
