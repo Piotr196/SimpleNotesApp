@@ -24,6 +24,7 @@ public class UserService {
 
     @Transactional
     public void delete(final User user) {
+        user.getNotes().forEach(note -> note.removeUser(user));
         userRepository.delete(user);
     }
 
