@@ -19,7 +19,7 @@ public class Note {
     @Column(name = "content")
     private String content;
 
-    @ManyToMany(mappedBy = "notes")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "notes")
     private Set<User> users = new HashSet<>();
 
     public Note(final long id, final String title, final String content, final Set<User> users) {
@@ -63,5 +63,13 @@ public class Note {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public boolean addUser(User user) {
+        return users.add(user);
+    }
+
+    public boolean removeUser(User user) {
+        return users.remove(user);
     }
 }

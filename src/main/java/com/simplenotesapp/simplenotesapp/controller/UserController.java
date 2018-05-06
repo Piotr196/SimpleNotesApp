@@ -1,7 +1,9 @@
 package com.simplenotesapp.simplenotesapp.controller;
 
 import com.simplenotesapp.simplenotesapp.dto.UserDto;
+import com.simplenotesapp.simplenotesapp.dto.UserWithNotesDto;
 import com.simplenotesapp.simplenotesapp.mapper.UserDtoMapper;
+import com.simplenotesapp.simplenotesapp.mapper.UserWithNotesDtoMapper;
 import com.simplenotesapp.simplenotesapp.model.User;
 import com.simplenotesapp.simplenotesapp.service.UserService;
 import org.slf4j.Logger;
@@ -26,6 +28,9 @@ public class UserController {
     @Autowired
     private UserDtoMapper userDtoMapper;
 
+    @Autowired
+    private UserWithNotesDtoMapper userWithNotesDtoMapper;
+
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
         UserDto saved = userDtoMapper.mapToDto(userService.save(userDtoMapper.mapToEntity(userDto)));
@@ -46,8 +51,14 @@ public class UserController {
     }
 
     @RequestMapping(value = "/api/users/{id}", method = RequestMethod.GET)
-    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
-        UserDto userDto = userDtoMapper.mapToDto(userService.findOneById(id));
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    public ResponseEntity<UserWithNotesDto> getUser(@PathVariable Long id) {
+        UserWithNotesDto userWithNotesDto = userWithNotesDtoMapper.mapToDto(userService.findOneById(id));
+        return new ResponseEntity<>(userWithNotesDto, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
+        UserDto updatedUserDto = userDtoMapper.mapToDto(userService.update(userDtoMapper.mapToEntity(userDto)));
+        return new ResponseEntity<>(updatedUserDto, HttpStatus.OK);
     }
 }

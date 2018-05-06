@@ -1,6 +1,7 @@
 package com.simplenotesapp.simplenotesapp.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +15,7 @@ public class User {
     @Column(name = "id", columnDefinition = "serial")
     private Long id;
 
+    @NotNull
     @Column(name = "login")
     private String login;
 
@@ -23,11 +25,12 @@ public class User {
     @Column(name = "surname")
     private String surname;
 
+    @NotNull
     @Column(name = "password", length = 64)
     @Size(min = 64, max = 64)
     private String password;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_notes",
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "note_id") })
@@ -84,6 +87,14 @@ public class User {
 
     public void setNotes(Set<Note> notes) {
         this.notes = notes;
+    }
+
+    public boolean addNote(Note note) {
+        return notes.add(note);
+    }
+
+    public boolean removeNote(Note note) {
+        return notes.remove(note);
     }
 
     public String getLogin() {

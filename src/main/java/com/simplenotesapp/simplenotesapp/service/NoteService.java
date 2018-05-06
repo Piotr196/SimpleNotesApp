@@ -6,6 +6,7 @@ import com.simplenotesapp.simplenotesapp.repository.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
@@ -15,12 +16,30 @@ public class NoteService {
     @Autowired
     NoteRepository noteRepository;
 
+    @Transactional
     public Note save(final Note note) {
-        return noteRepository.save(note);
+        Note saved = noteRepository.save(note);
+        saved.getUsers().forEach(user -> user.addNote(saved));
+        return saved;
     }
 
+    @Transactional
     public void delete(final Note note) {
         noteRepository.delete(note);
+    }
+
+    @Transactional
+    public Note update(final Note note) {
+        Note updatedNote = findOneById(note.getId());
+
+        updatedNote.setTitle(note.getTitle());
+        updatedNote.setContent(note.getContent());
+        updatedNote.getUsers().forEach(user -> user.removeNote(updatedNote));
+        updatedNote.getUsers().clear();
+        updatedNote.setUsers(note.getUsers());
+        updatedNote.getUsers().forEach(user -> user.addNote(updatedNote));
+
+        return noteRepository.save(updatedNote);
     }
 
     public List<Note> findAll() {
