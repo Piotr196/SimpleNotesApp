@@ -17,9 +17,8 @@ public class UserService {
 
     @Transactional
     public User save(final User user) {
-        User saved = userRepository.save(user);
-        saved.getNotes().forEach(note -> note.addUser(saved));
-        return saved;
+        user.getNotes().forEach(note -> note.addUser(user));
+        return userRepository.save(user);
     }
 
     @Transactional
@@ -37,11 +36,10 @@ public class UserService {
         updatedUser.setLogin(user.getLogin());
         updatedUser.setPassword(user.getPassword());
         updatedUser.getNotes().forEach(note -> note.removeUser(updatedUser));
-        updatedUser.getNotes().clear();
         updatedUser.setNotes(user.getNotes());
         updatedUser.getNotes().forEach(note -> note.addUser(updatedUser));
 
-        return userRepository.save(user);
+        return updatedUser;
     }
 
     public List<User> findAll() {
