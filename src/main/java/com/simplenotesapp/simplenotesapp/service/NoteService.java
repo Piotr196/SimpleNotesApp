@@ -18,9 +18,8 @@ public class NoteService {
 
     @Transactional
     public Note save(final Note note) {
-        Note saved = noteRepository.save(note);
-        saved.getUsers().forEach(user -> user.addNote(saved));
-        return saved;
+        note.getUsers().forEach(user -> user.addNote(note));
+        return noteRepository.save(note);
     }
 
     @Transactional
@@ -36,11 +35,10 @@ public class NoteService {
         updatedNote.setTitle(note.getTitle());
         updatedNote.setContent(note.getContent());
         updatedNote.getUsers().forEach(user -> user.removeNote(updatedNote));
-        updatedNote.getUsers().clear();
         updatedNote.setUsers(note.getUsers());
         updatedNote.getUsers().forEach(user -> user.addNote(updatedNote));
 
-        return noteRepository.save(updatedNote);
+        return updatedNote;
     }
 
     public List<Note> findAll() {
