@@ -9,7 +9,9 @@ CREATE TABLE public.users (
 CREATE TABLE public.notes (
 	id bigserial PRIMARY KEY,
 	title varchar(100),
-	content varchar(1000)
+	content varchar(1000),
+	created_time timestamptz,
+	modified_time timestamptz
 );
 
 CREATE TABLE public.user_notes (
