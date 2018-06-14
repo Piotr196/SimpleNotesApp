@@ -3,6 +3,10 @@ package com.simplenotesapp.simplenotesapp.service;
 
 import com.simplenotesapp.simplenotesapp.model.Note;
 import com.simplenotesapp.simplenotesapp.repository.NoteRepository;
+import com.simplenotesapp.simplenotesapp.sorting.generic.Sorter;
+import com.simplenotesapp.simplenotesapp.sorting.generic.SorterFactory;
+import com.simplenotesapp.simplenotesapp.sorting.generic.SortingOrder;
+import com.simplenotesapp.simplenotesapp.sorting.notes.NotesSortingSubject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +19,9 @@ public class NoteService {
 
     @Autowired
     NoteRepository noteRepository;
+
+    @Autowired
+    SorterFactory<Note, NotesSortingSubject> notesSorterFactory;
 
     @Transactional
     public Note save(final Note note) {
@@ -41,8 +48,13 @@ public class NoteService {
         return updatedNote;
     }
 
-    public List<Note> findAll() {
-        return noteRepository.findAll();
+    public List<Note> findAll(NotesSortingSubject sortingSubject, SortingOrder sortingOrder) {
+        List<Note> notes = noteRepository.findAll();
+        if (sortingSubject != null) {
+            Sorter<Note> sorter = notesSorterFactory.createSorter(sortingSubject);
+            notes = sorter.sort(notes, sortingOrder != null ? sortingOrder : SortingOrder.ASC);
+        }
+        return notes;
     }
 
     public Note findOneById(final Long id) {

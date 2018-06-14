@@ -6,6 +6,8 @@ import com.simplenotesapp.simplenotesapp.mapper.NoteDtoMapper;
 import com.simplenotesapp.simplenotesapp.mapper.NoteWithUsersDtoMapper;
 import com.simplenotesapp.simplenotesapp.model.Note;
 import com.simplenotesapp.simplenotesapp.service.NoteService;
+import com.simplenotesapp.simplenotesapp.sorting.generic.SortingOrder;
+import com.simplenotesapp.simplenotesapp.sorting.notes.NotesSortingSubject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +46,10 @@ public class NoteController {
     }
 
     @RequestMapping(value = "/api/notes", method = RequestMethod.GET)
-    public ResponseEntity<List<NoteDto>> getNotes() {
-        List<Note> notes = noteService.findAll();
+    public ResponseEntity<List<NoteDto>> getNotes(
+            @RequestParam(value = "sortby", required = false) NotesSortingSubject sortingSubject,
+            @RequestParam(value = "order", required = false) SortingOrder sortingOrder) {
+        List<Note> notes = noteService.findAll(sortingSubject, sortingOrder);
         List<NoteDto> notesDtos = notes.stream().map(note -> noteDtoMapper.mapToDto(note)).collect(Collectors.toList());
         return new ResponseEntity<>(notesDtos, HttpStatus.OK);
     }
