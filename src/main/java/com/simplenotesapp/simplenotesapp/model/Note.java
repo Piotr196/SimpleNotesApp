@@ -1,6 +1,7 @@
 package com.simplenotesapp.simplenotesapp.model;
 
 import javax.persistence.*;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,13 +20,22 @@ public class Note {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "created_time")
+    private ZonedDateTime createdTime;
+
+    @Column(name = "modified_time")
+    private ZonedDateTime modifiedTime;
+
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "notes")
     private Set<User> users = new HashSet<>();
 
-    public Note(final long id, final String title, final String content, final Set<User> users) {
+    public Note(final long id, final String title, final String content, final ZonedDateTime createdTime,
+                final ZonedDateTime modifiedTime, final Set<User> users) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.createdTime = createdTime;
+        this.modifiedTime = modifiedTime;
         this.users = users;
     }
 
@@ -55,6 +65,22 @@ public class Note {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public ZonedDateTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(ZonedDateTime createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public ZonedDateTime getModifiedTime() {
+        return modifiedTime;
+    }
+
+    public void setModifiedTime(ZonedDateTime modifiedTime) {
+        this.modifiedTime = modifiedTime;
     }
 
     public Set<User> getUsers() {

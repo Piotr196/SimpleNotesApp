@@ -32,8 +32,8 @@ public class User {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_notes",
-            joinColumns = { @JoinColumn(name = "user_id") },
-            inverseJoinColumns = { @JoinColumn(name = "note_id") })
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "note_id")})
     private Set<Note> notes = new HashSet<>();
 
     public User(final Long id, final String login, final String name, final String surname, final String password, final Set<Note> notes) {
