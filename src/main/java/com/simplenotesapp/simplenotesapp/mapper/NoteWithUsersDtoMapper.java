@@ -23,6 +23,8 @@ public class NoteWithUsersDtoMapper {
         return new Note(noteDto.getId(),
                 noteDto.getTitle(),
                 noteDto.getContent(),
+                noteDto.getCreatedTime(),
+                noteDto.getModifiedTime(),
                 new HashSet<>(userService.findAllById(noteDto.getUsersId())));
     }
 
@@ -30,6 +32,8 @@ public class NoteWithUsersDtoMapper {
         return new NoteWithUsersDto(note.getId(),
                 note.getTitle(),
                 note.getContent(),
+                note.getCreatedTime(),
+                note.getModifiedTime(),
                 note.getUsers().stream().map(userDtoMapper::mapToDto).collect(Collectors.toSet()));
     }
 }
