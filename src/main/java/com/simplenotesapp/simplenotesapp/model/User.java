@@ -26,8 +26,8 @@ public class User {
     private String surname;
 
     @NotNull
-    @Column(name = "password", length = 64)
-    @Size(min = 64, max = 64)
+    @Column(name = "password")
+    @Size(min = BCRYPT_PASSWORD_LENGTH, max = BCRYPT_PASSWORD_LENGTH)
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -35,6 +35,8 @@ public class User {
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "note_id")})
     private Set<Note> notes = new HashSet<>();
+
+    private static final int BCRYPT_PASSWORD_LENGTH = 60;
 
     public User(final Long id, final String login, final String name, final String surname, final String password, final Set<Note> notes) {
         this.id = id;

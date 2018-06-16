@@ -1,30 +1,58 @@
 package com.simplenotesapp.simplenotesapp.config;
 
+import com.simplenotesapp.simplenotesapp.service.UserDetailsServiceImpl;
+import com.simplenotesapp.simplenotesapp.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String[] AUTH_LIST = {
-            // -- swagger ui
-            "**/swagger-resources/**",
-            "/swagger-ui.html",
-            "/v2/api-docs",
-            "/webjars/**"
-    };
+    @Autowired
+    CustomLogoutSuccessHandler customLogoutSuccessHandler;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+
+    @Override
+    public UserDetailsService userDetailsServiceBean() {
+        return new UserDetailsServiceImpl(userService);
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests().antMatchers(AUTH_LIST).authenticated()
+                .authorizeRequests()
+                .antMatchers("/").hasAnyRole("USER")
+                .antMatchers("/api/answers/**").hasAnyRole("USER") //TODO: fill in correctly to protect controllers' methods
+                .antMatchers("/api/users/**").hasAnyRole("ADMIN")
+                .antMatchers("/api/questions/**").hasAnyRole("USER")
+                .antMatchers("/api/security/**").hasAnyRole("USER")
                 .and()
                 .httpBasic().authenticationEntryPoint(swaggerAuthenticationEntryPoint())
+                .and()
+                .formLogin()
+                .and()
+                .logout().logoutSuccessHandler(customLogoutSuccessHandler)
                 .and()
                 .csrf().disable();
     }
@@ -36,4 +64,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return entryPoint;
     }
 
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication().withUser("admin").password("$2a$12$MriI8oc1kINM5mHfdJlK3Ot6NqIqy/eG3r0D6SRIw00zln1dKDeVO").roles("ADMIN", "USER");//haslo = "haslo"
+        auth.userDetailsService(userDetailsServiceBean()).passwordEncoder(passwordEncoder());
+    }
 }
