@@ -10,6 +10,7 @@ public class UserDto {
     private String surname;
     private String password;
     private Set<Long> notesId;
+    private Set<String> roles;
 
     public UserDto(final Long id, final String login, final String name, final String surname, final String password, final Set<Long> notesId) {
         this.id = id;
@@ -70,5 +71,13 @@ public class UserDto {
 
     public void setNotesId(Set<Long> notesId) {
         this.notesId = notesId;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 }

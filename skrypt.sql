@@ -1,7 +1,7 @@
 CREATE TABLE public.users (
 	id bigserial  PRIMARY KEY,
 	login varchar(40) UNIQUE NOT NULL,
-	password char(64) NOT NULL,
+	password char(60) NOT NULL,
 	name varchar(30),
 	surname varchar(100)
 );
