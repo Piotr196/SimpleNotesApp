@@ -3,6 +3,7 @@ package com.simplenotesapp.simplenotesapp.service;
 import com.simplenotesapp.simplenotesapp.model.User;
 import com.simplenotesapp.simplenotesapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,6 +19,7 @@ public class UserService {
     @Transactional
     public User save(final User user) {
         user.getNotes().forEach(note -> note.addUser(user));
+        user.setPassword(hashByBCrypt(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -34,7 +36,7 @@ public class UserService {
         updatedUser.setName(user.getName());
         updatedUser.setSurname(user.getSurname());
         updatedUser.setLogin(user.getLogin());
-        updatedUser.setPassword(user.getPassword());
+        updatedUser.setPassword(hashByBCrypt(user.getPassword()));
         updatedUser.getNotes().forEach(note -> note.removeUser(updatedUser));
         updatedUser.setNotes(user.getNotes());
         updatedUser.getNotes().forEach(note -> note.addUser(updatedUser));
@@ -68,5 +70,9 @@ public class UserService {
 
     public Set<User> findAllBySurname(final String surname) {
         return userRepository.findAllBySurname(surname);
+    }
+
+    private String hashByBCrypt(String publicPassword) {
+        return BCrypt.hashpw(publicPassword, BCrypt.gensalt());
     }
 }
