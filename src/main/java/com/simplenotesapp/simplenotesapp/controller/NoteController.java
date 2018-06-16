@@ -5,6 +5,7 @@ import com.simplenotesapp.simplenotesapp.dto.NoteWithUsersDto;
 import com.simplenotesapp.simplenotesapp.mapper.NoteDtoMapper;
 import com.simplenotesapp.simplenotesapp.mapper.NoteWithUsersDtoMapper;
 import com.simplenotesapp.simplenotesapp.model.Note;
+import com.simplenotesapp.simplenotesapp.model.User;
 import com.simplenotesapp.simplenotesapp.service.NoteService;
 import com.simplenotesapp.simplenotesapp.sorting.generic.SortingOrder;
 import com.simplenotesapp.simplenotesapp.sorting.notes.NotesSortingSubject;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -64,5 +66,12 @@ public class NoteController {
     public ResponseEntity<NoteDto> updateNote(@RequestBody NoteDto noteDto) {
         NoteDto updatedNoteDto = noteDtoMapper.mapToDto(noteService.update(noteDtoMapper.mapToEntity(noteDto)));
         return new ResponseEntity<>(updatedNoteDto, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/notes/{id}/users", method = RequestMethod.GET)
+    public ResponseEntity<Set<String>> getUserLoginsForNote(@PathVariable Long id) {
+        Set<String> logins = noteService.findOneById(id).getUsers().stream()
+                .map(User::getLogin).collect(Collectors.toSet());
+        return new ResponseEntity<>(logins, HttpStatus.OK);
     }
 }
