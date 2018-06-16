@@ -8,16 +8,16 @@ CREATE TABLE public.users (
 
 CREATE TABLE public.notes (
 	id bigserial PRIMARY KEY,
-	title varchar(100),
-	content varchar(1000),
-	created_time timestamptz,
-	modified_time timestamptz
+	title varchar(100) NOT NULL,
+	content varchar(1000) NOT NULL,
+	created_time timestamptz NOT NULL,
+	modified_time timestamptz NOT NULL
 );
 
 CREATE TABLE public.user_notes (
 	id bigserial PRIMARY KEY,
-	user_id bigint REFERENCES users(id),
-	note_id bigint REFERENCES notes(id),
+	user_id bigint REFERENCES users(id) NOT NULL,
+	note_id bigint REFERENCES notes(id) NOT NULL,
 	UNIQUE(user_id, note_id)
 );
 

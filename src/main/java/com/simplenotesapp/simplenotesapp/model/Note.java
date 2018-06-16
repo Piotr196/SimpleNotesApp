@@ -1,6 +1,7 @@
 package com.simplenotesapp.simplenotesapp.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,15 +15,19 @@ public class Note {
     @Column(name = "id", columnDefinition = "serial")
     private long id;
 
+    @NotNull
     @Column(name = "title")
     private String title;
 
+    @NotNull
     @Column(name = "content")
     private String content;
 
+    @NotNull
     @Column(name = "created_time")
     private ZonedDateTime createdTime;
 
+    @NotNull
     @Column(name = "modified_time")
     private ZonedDateTime modifiedTime;
 
