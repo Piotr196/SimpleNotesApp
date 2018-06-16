@@ -94,6 +94,19 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                    <targetClasses>
+                        <param>com.simplenotesapp.simplenotesapp*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>com.simplenotesapp.simplenotesapp*</param>
+                    </targetTests>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
