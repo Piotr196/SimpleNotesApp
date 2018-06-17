@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:4200")
 @Controller
 public class UserController {
+
     private final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
@@ -61,4 +62,5 @@ public class UserController {
         UserDto updatedUserDto = userDtoMapper.mapToDto(userService.update(userDtoMapper.mapToEntity(userDto)));
         return new ResponseEntity<>(updatedUserDto, HttpStatus.OK);
     }
+
 }

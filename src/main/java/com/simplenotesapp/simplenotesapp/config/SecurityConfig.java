@@ -42,11 +42,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/").hasAnyRole("USER")
-                .antMatchers("/api/answers/**").hasAnyRole("USER") //TODO: fill in correctly to protect controllers' methods
+                .antMatchers("/").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/api/users/**").hasAnyRole("ADMIN")
-                .antMatchers("/api/questions/**").hasAnyRole("USER")
-                .antMatchers("/api/security/**").hasAnyRole("USER")
+                .antMatchers("/api/notes/**").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/security/**").hasAnyRole("USER", "ADMIN")
                 .and()
                 .httpBasic().authenticationEntryPoint(swaggerAuthenticationEntryPoint())
                 .and()
@@ -66,7 +65,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("admin").password("$2a$12$MriI8oc1kINM5mHfdJlK3Ot6NqIqy/eG3r0D6SRIw00zln1dKDeVO").roles("ADMIN", "USER");//haslo = "haslo"
+        auth.inMemoryAuthentication()
+                .withUser("admin")
+                .password("$2a$12$MriI8oc1kINM5mHfdJlK3Ot6NqIqy/eG3r0D6SRIw00zln1dKDeVO")//password = "haslo"
+                .roles("ADMIN", "USER");
         auth.userDetailsService(userDetailsServiceBean()).passwordEncoder(passwordEncoder());
     }
 }
