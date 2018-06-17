@@ -24,8 +24,9 @@ public class NoteService {
 
     @Transactional
     public Note save(final Note note) {
+        Note saved = noteRepository.save(note);
         note.getUsers().forEach(user -> user.addNote(note));
-        return noteRepository.save(note);
+        return saved;
     }
 
     @Transactional
