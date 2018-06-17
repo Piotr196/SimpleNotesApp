@@ -116,10 +116,10 @@
                 <version>1.4.0</version>
                 <configuration>
                     <targetClasses>
-                        <param>com.simplenotesapp.simplenotesapp*</param>
+                        <param>com.simplenotesapp.simplenotesapp.sorting.notes*</param>
                     </targetClasses>
                     <targetTests>
-                        <param>com.simplenotesapp.simplenotesapp*</param>
+                        <param>com.simplenotesapp.simplenotesapp.sorting.notes*</param>
                     </targetTests>
                 </configuration>
             </plugin>
