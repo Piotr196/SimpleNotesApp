@@ -1,6 +1,5 @@
 package com.simplenotesapp.simplenotesapp.service;
 
-
 import com.simplenotesapp.simplenotesapp.model.Note;
 import com.simplenotesapp.simplenotesapp.repository.NoteRepository;
 import com.simplenotesapp.simplenotesapp.sorting.generic.Sorter;
@@ -38,23 +37,21 @@ public class NoteService {
     @Transactional
     public Note update(final Note note) {
         Note updatedNote = findOneById(note.getId());
-
-        updatedNote.setTitle(note.getTitle());
-        updatedNote.setContent(note.getContent());
-        updatedNote.getUsers().forEach(user -> user.removeNote(updatedNote));
-        updatedNote.setUsers(note.getUsers());
-        updatedNote.getUsers().forEach(user -> user.addNote(updatedNote));
-
+        if (note.getUsers().isEmpty()) {
+            noteRepository.delete(updatedNote);
+        } else {
+            updatedNote.setTitle(note.getTitle());
+            updatedNote.setContent(note.getContent());
+            updatedNote.getUsers().forEach(user -> user.removeNote(updatedNote));
+            updatedNote.setUsers(note.getUsers());
+            updatedNote.getUsers().forEach(user -> user.addNote(updatedNote));
+        }
         return updatedNote;
     }
 
     public List<Note> findAll(NotesSortingSubject sortingSubject, SortingOrder sortingOrder) {
         List<Note> notes = noteRepository.findAll();
-        if (sortingSubject != null) {
-            Sorter<Note> sorter = notesSorterFactory.createSorter(sortingSubject);
-            notes = sorter.sort(notes, sortingOrder != null ? sortingOrder : SortingOrder.ASC);
-        }
-        return notes;
+        return sort(notes, sortingSubject, sortingOrder);
     }
 
     public Note findOneById(final Long id) {
@@ -73,4 +70,13 @@ public class NoteService {
     public Note findOneByIdNullable(final Long id) {
         return noteRepository.findOneById(id).orElse(null);
     }
+
+    public List<Note> sort(List<Note> notes, NotesSortingSubject sortingSubject, SortingOrder sortingOrder) {
+        if (sortingSubject != null) {
+            Sorter<Note> sorter = notesSorterFactory.createSorter(sortingSubject);
+            notes = sorter.sort(notes, sortingOrder != null ? sortingOrder : SortingOrder.ASC);
+        }
+        return notes;
+    }
+
 }

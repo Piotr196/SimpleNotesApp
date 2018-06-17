@@ -2,6 +2,7 @@ package com.simplenotesapp.simplenotesapp.controller;
 
 import com.simplenotesapp.simplenotesapp.dto.UserDto;
 import com.simplenotesapp.simplenotesapp.mapper.UserDtoMapper;
+import com.simplenotesapp.simplenotesapp.model.User;
 import com.simplenotesapp.simplenotesapp.service.SessionService;
 import com.simplenotesapp.simplenotesapp.service.UserService;
 import org.slf4j.Logger;
@@ -29,9 +30,9 @@ public class SessionController {
 
     @RequestMapping(value = "/api/security", method = RequestMethod.GET)
     public ResponseEntity<UserDto> getLoggedUser() {
-        String login = sessionService.getLoggedUsername();
-        if (login != null) {
-            UserDto userDto = userDtoMapper.mapToDto(userService.findOneByLogin(login));
+        User user = sessionService.getLoggedUser();
+        if (user != null) {
+            UserDto userDto = userDtoMapper.mapToDto(user);
             userDto.setRoles(sessionService.getLoggedUserRoles());
             return new ResponseEntity<>(userDto, HttpStatus.OK);
         } else {
