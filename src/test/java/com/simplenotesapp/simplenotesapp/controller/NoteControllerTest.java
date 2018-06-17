@@ -2,6 +2,7 @@ package com.simplenotesapp.simplenotesapp.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Sets;
 import com.simplenotesapp.simplenotesapp.dto.NoteDto;
 import com.simplenotesapp.simplenotesapp.mapper.NoteDtoMapper;
@@ -11,6 +12,7 @@ import com.simplenotesapp.simplenotesapp.model.User;
 import com.simplenotesapp.simplenotesapp.service.NoteService;
 import com.simplenotesapp.simplenotesapp.service.SessionService;
 import com.simplenotesapp.simplenotesapp.service.UserService;
+import org.apache.tomcat.jni.Error;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +20,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.web.FilterChainProxy;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -31,8 +40,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -46,16 +57,12 @@ import static org.hamcrest.core.Is.is;
 public class NoteControllerTest {
 
     private static final NoteDto NOTE_DTO = new NoteDto(1L, "title", "content",
-            ZonedDateTime.now(), ZonedDateTime.now(), Sets.newHashSet(1L));
+            ZonedDateTime.now(), ZonedDateTime.now(), new HashSet<>());
 
     private static final User USER = new User(1L, "login", "name", "surname", "password", Sets.newHashSet());
 
     private static final Note NOTE = new Note(1L, "title", "content",
-            ZonedDateTime.now(), ZonedDateTime.now(), Sets.newHashSet(USER));
-
-    static {
-        USER.getNotes().add(NOTE);
-    }
+            ZonedDateTime.now(), ZonedDateTime.now(), new HashSet<>());
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -77,24 +84,25 @@ public class NoteControllerTest {
     @MockBean
     private NoteWithUsersDtoMapper noteWithUsersDtoMapper;
 
+    @Autowired
     private MockMvc mvc;
 
 
     @Before
     public void setUp() throws Exception {
         mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
-        given(noteDtoMapper.mapToEntity(NOTE_DTO)).willReturn(NOTE);
-        given(noteDtoMapper.mapToDto(NOTE)).willReturn(NOTE_DTO);
-        given(noteService.save(NOTE)).willReturn(NOTE);
+        given(noteDtoMapper.mapToEntity(any(NoteDto.class))).willReturn(NOTE);
+        given(noteDtoMapper.mapToDto(any(Note.class))).willReturn(NOTE_DTO);
+        given(noteService.save(any(Note.class))).willReturn(NOTE);
+        mapper.registerModule(new JavaTimeModule());
     }
 
     @Test
     public void shouldAddNote() throws Exception {
-        //given
-        //when
-        mvc.perform(post("/api/notes").contentType("application/json").
-                content(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(NOTE_DTO)).with(httpBasic("admin","haslo"))).
-                andExpect(status().isOk()).andExpect(jsonPath("$.id", is("1")));
+        mvc.perform(post("/api/notes").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(NOTE_DTO))
+                .with(user("admin").roles("ADMIN", "USER"))
+        ).andExpect(status().isOk()).andExpect(jsonPath("$.id", is(1)));
     }
 
     @Test
