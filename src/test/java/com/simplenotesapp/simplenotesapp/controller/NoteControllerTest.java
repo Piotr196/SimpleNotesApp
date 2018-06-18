@@ -106,12 +106,11 @@ public class NoteControllerTest {
     @MockBean
     private NoteWithUsersDtoMapper noteWithUsersDtoMapper;
 
-    @Autowired
     private MockMvc mvc;
 
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
         given(noteDtoMapper.mapToEntity(any(NoteDto.class))).willReturn(NOTE);
         given(noteDtoMapper.mapToDto(any(Note.class))).willReturn(NOTE_DTO);
