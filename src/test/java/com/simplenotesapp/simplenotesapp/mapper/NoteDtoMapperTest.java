@@ -6,7 +6,6 @@ import com.simplenotesapp.simplenotesapp.dto.NoteDto;
 import com.simplenotesapp.simplenotesapp.dto.UserDto;
 import com.simplenotesapp.simplenotesapp.model.Note;
 import com.simplenotesapp.simplenotesapp.model.User;
-import com.simplenotesapp.simplenotesapp.service.NoteService;
 import com.simplenotesapp.simplenotesapp.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,16 +13,12 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willReturn;
 
 public class NoteDtoMapperTest {
 

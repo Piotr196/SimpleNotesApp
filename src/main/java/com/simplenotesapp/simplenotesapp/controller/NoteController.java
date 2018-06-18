@@ -77,7 +77,8 @@ public class NoteController {
     @RequestMapping(value = "/api/notes/{id}", method = RequestMethod.GET)
     public ResponseEntity<NoteWithUsersDto> getNote(@PathVariable Long id) {
         Note savedNote = noteService.findOneById(id);
-        if (savedNote.getUsers().contains(sessionService.getLoggedUser().getId()) || sessionService.isUserInRole("ROLE_ADMIN")) {
+        User loggedUser = sessionService.getLoggedUser();
+        if (loggedUser != null && (savedNote.getUsers().contains(loggedUser.getId()) || sessionService.isUserInRole("ROLE_ADMIN"))) {
             NoteWithUsersDto noteWithUsersDto = noteWithUsersDtoMapper.mapToDto(savedNote);
             return new ResponseEntity<>(noteWithUsersDto, HttpStatus.OK);
         } else {
@@ -88,7 +89,8 @@ public class NoteController {
     @RequestMapping(value = "/api/notes", method = RequestMethod.PUT)
     public ResponseEntity<NoteDto> updateNote(@RequestBody NoteDto noteDto) {
         Note savedNote = noteService.findOneById(noteDto.getId());
-        if (savedNote.getUsers().contains(sessionService.getLoggedUser().getId()) || sessionService.isUserInRole("ROLE_ADMIN")) {
+        User loggedUser = sessionService.getLoggedUser();
+        if (loggedUser != null && (savedNote.getUsers().contains(loggedUser.getId()) || sessionService.isUserInRole("ROLE_ADMIN"))) {
             NoteDto updatedNoteDto = noteDtoMapper.mapToDto(noteService.update(noteDtoMapper.mapToEntity(noteDto)));
             return new ResponseEntity<>(updatedNoteDto, HttpStatus.OK);
         } else {
