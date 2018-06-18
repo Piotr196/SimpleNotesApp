@@ -48,3 +48,7 @@ logging:
 #    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
 #    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 #  file: ${java.io.tmpdir}/application.log
+
+weather:
+  baseUrl: http://api.openweathermap.org/data/2.5/weather
+  apiKey: 46815136db80aa4eb85dd7b66bd50d7b
