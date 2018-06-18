@@ -169,4 +169,21 @@ public class NoteServiceTest {
         assertThat(notes.get(0), is(equalTo(note1)));
         assertThat(notes.get(1), is(equalTo(note2)));
     }
+    //TODO:
+
+    @Test
+    public void shouldReturnThreeNotesSortedByTitleAsc() {
+        // Given
+        // setUp() method
+        when(mockSorter.sort(mockNotes, SortingOrder.ASC)).thenReturn(Arrays.asList(note3, note2, note1));
+        when(mockNotesSorterFactory.createSorter(ArgumentMatchers.any())).thenReturn(mockSorter);
+
+        // When
+        List<Note> resultNotes = noteService.sort(mockNotes, NotesSortingSubject.TITLE, SortingOrder.ASC);
+
+        // Then
+        assertThat(resultNotes.get(0), is(equalTo(note3)));
+        assertThat(resultNotes.get(1), is(equalTo(note2)));
+        assertThat(resultNotes.get(2), is(equalTo(note1)));
+    }
 }
