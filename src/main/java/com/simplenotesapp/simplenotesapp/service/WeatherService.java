@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.GsonJsonParser;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,18 +18,21 @@ import java.util.Map;
 @Service
 public class WeatherService {
 
-    private RestTemplate restTemplate = new RestTemplate();
+    private RestTemplate restTemplate;
 
-    @Value(value = "weather.baseUrl")
+    @Value(value = "${weather.baseUrl}")
     private String baseUrl;
 
-    @Value(value = "weather.apiKey")
+    @Value(value = "${weather.apiKey}")
     private String apiKey;
 
+    public WeatherService(RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplate = restTemplateBuilder.build();
+    }
+
     public String getWeatherForCity(String city) {
-//        String json = restTemplate.getForObject(URI.create(baseUrl + "?q=" + city + "&APPID=" + apiKey), String.class);
-        String json = restTemplate.getForObject(URI.create("http://api.openweathermap.org/data/2.5/weather?q=Lodz&APPID=46815136db80aa4eb85dd7b66bd50d7b"), String.class);
-        JsonParser parser = new JsonParser();
+        String json = restTemplate.getForObject(URI.create(baseUrl + "?q=" + city + "&APPID=" + apiKey), String.class);
+      JsonParser parser = new JsonParser();
         JsonObject jsonObject = parser.parse(json).getAsJsonObject();
         String weatherDescription = jsonObject.getAsJsonArray("weather").get(0).getAsJsonObject().
                 getAsJsonPrimitive("description").getAsString();
