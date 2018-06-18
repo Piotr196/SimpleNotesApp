@@ -14,9 +14,6 @@ import java.util.stream.Collectors;
 public class NoteDtoMapper {
 
     @Autowired
-    UserDtoMapper userDtoMapper;
-
-    @Autowired
     UserService userService;
 
     public Note mapToEntity(final NoteDto noteDto) {

@@ -1,5 +1,7 @@
 package com.simplenotesapp.simplenotesapp.service;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.simplenotesapp.simplenotesapp.model.Note;
 import com.simplenotesapp.simplenotesapp.model.User;
 import com.simplenotesapp.simplenotesapp.repository.NoteRepository;
@@ -21,9 +23,10 @@ import java.util.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
-public class NoteServiceFindAllTests {
+public class NoteServiceTest {
 
     @InjectMocks
     private NoteService noteService;
@@ -47,10 +50,11 @@ public class NoteServiceFindAllTests {
 
         ZonedDateTime time = ZonedDateTime.of(2018, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault());
         note1 = new Note(1, "aaTitle", "kkContent", time, time, mockUsers);
-        note2 = new Note(1, "zzTitle", "zzContent", time, time, mockUsers);
-        note3 = new Note(1, "kkTitle", "aaContent", time, time, mockUsers);
+        note2 = new Note(2, "zzTitle", "zzContent", time, time, mockUsers);
+        note3 = new Note(3, "kkTitle", "aaContent", time, time, mockUsers);
         mockNotes = new ArrayList<>(Arrays.asList(note1, note2, note3));
-        when(mockNoteRepository.findAll()).thenReturn(mockNotes);
+        given(mockNoteRepository.findAll()).willReturn(mockNotes);
+        given(mockNoteRepository.findOneById(1L)).willReturn(Optional.of(note1));
     }
 
     @Test
@@ -137,6 +141,49 @@ public class NoteServiceFindAllTests {
         // Then
         assertThat(resultNotes.get(0), is(equalTo(note2)));
         assertThat(resultNotes.get(1), is(equalTo(note3)));
+        assertThat(resultNotes.get(2), is(equalTo(note1)));
+    }
+
+    @Test
+    public void shouldReturnOneNoteById() {
+        // Given
+        // setUp() method
+
+        // When
+        Note note = noteService.findOneById(1L);
+
+        // Then
+        assertThat(note, is(equalTo(note1)));
+    }
+
+    @Test
+    public void shouldReturnTwoNotesByIds() {
+        // Given
+        // setUp() method
+        when(mockNoteRepository.findAllById(Sets.newHashSet(1L, 2L))).thenReturn(Lists.newArrayList(note1, note2));
+
+        // When
+        List<Note> notes = noteService.findAllById(Sets.newHashSet(1L, 2L));
+
+        // Then
+        assertThat(notes.get(0), is(equalTo(note1)));
+        assertThat(notes.get(1), is(equalTo(note2)));
+    }
+    //TODO:
+
+    @Test
+    public void shouldReturnThreeNotesSortedByTitleAsc() {
+        // Given
+        // setUp() method
+        when(mockSorter.sort(mockNotes, SortingOrder.ASC)).thenReturn(Arrays.asList(note3, note2, note1));
+        when(mockNotesSorterFactory.createSorter(ArgumentMatchers.any())).thenReturn(mockSorter);
+
+        // When
+        List<Note> resultNotes = noteService.sort(mockNotes, NotesSortingSubject.TITLE, SortingOrder.ASC);
+
+        // Then
+        assertThat(resultNotes.get(0), is(equalTo(note3)));
+        assertThat(resultNotes.get(1), is(equalTo(note2)));
         assertThat(resultNotes.get(2), is(equalTo(note1)));
     }
 }
